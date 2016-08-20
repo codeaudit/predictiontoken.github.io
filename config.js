@@ -2,17 +2,17 @@ var configs = {};
 
 //mainnet
 configs["1"] = {
-  homeURL: 'https://outcomecoin.github.io',
-  // homeURL: 'http://0.0.0.0:8080',
-  contractYesNo: 'yesno.sol',
-  contractToken: 'token.sol',
+  homeURL: 'https://predictiontoken.github.io',
+  // homeURL: 'http://localhost:8080',
+  contractYesNo: 'smart_contract/yesno.sol',
+  contractToken: 'smart_contract/token.sol',
   ethTestnet: false,
   ethProvider: 'http://localhost:8545',
   ethGasPrice: 20000000000,
   ethAddr: '0x0000000000000000000000000000000000000123',
   ethAddrPrivateKey: '',
-  userCookie: 'OutcomeCoin',
-  eventsCacheCookie: 'OutcomeCoin_eventsCache',
+  userCookie: 'PredictionToken',
+  eventsCacheCookie: 'PredictionToken_eventsCache',
   coins: [
     {name: 'EPOS', kind: 'YesNo', addr: '0x1e965dcf984cc583a09eed4ce14dbdbbeb1e8e44', etherDeltaYes: 'EPOSY-ETH', etherDeltaNo: 'EPOSN-ETH', title: 'Ethereum to switch to Proof of Stake by July 1, 2017', explanation: 'Ethereum to switch to proof-of-stake by July 1, 2017. The definition of whether a given chain is "Ethereum" will be settled at the discretion of Reality Keys. Will be settled early if Ethereum switches to proof-of-stake before the specified date.'},
     {name: 'ETCW', kind: 'YesNo', addr: '0xc40c7b13596adc8d6f6f56955488f16aac3b214f', etherDeltaYes: 'ETCWY-ETH', etherDeltaNo: 'ETCWN-ETH', title: 'ETC to be higher than ETH on January 1, 2017', explanation: 'The ETC/ETH currency pair to be higher than 1.0 on January 1, 2017.'},
@@ -22,17 +22,17 @@ configs["1"] = {
 
 //testnet
 configs["2"] = {
-  homeURL: 'https://outcomecoin.github.io',
-  // homeURL: 'http://0.0.0.0:8080',
-  contractYesNo: 'yesno.sol',
-  contractToken: 'token.sol',
+  homeURL: 'https://predictiontoken.github.io',
+  // homeURL: 'http://localhost:8080',
+  contractYesNo: 'smart_contract/yesno.sol',
+  contractToken: 'smart_contract/token.sol',
   ethTestnet: true,
   ethProvider: 'http://localhost:8545',
   ethGasPrice: 20000000000,
   ethAddr: '0x0000000000000000000000000000000000000123',
   ethAddrPrivateKey: '',
-  userCookie: 'OutcomeCoin_testnet',
-  eventsCacheCookie: 'OutcomeCoin_eventsCache_testnet',
+  userCookie: 'PredictionToken_testnet',
+  eventsCacheCookie: 'PredictionToken_eventsCache_testnet',
   coins: [
     {name: 'Hardfork', kind: 'YesNo', addr: '0xd6da98a749ae32d49bed061db4dc11fe5bb1e505', etherDeltaYes: 'HFYES-ETH', etherDeltaNo: 'HFNO-ETH', title: 'Ethereum to hard-fork to retrieve DAO funds', explanation: 'A successful hard fork to take place allowing the recovery of some or all funds taken through bugs in The DAO'},
     {name: 'Zero', kind: 'YesNo', addr: '0x0000000000000000000000000000000000000000', etherDeltaYes: undefined, etherDeltaNo: undefined, title: 'Not a real token', explanation: 'Not a real token'},

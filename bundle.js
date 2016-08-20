@@ -4511,7 +4511,7 @@ Main.connectionTest = function() {
   } catch(err) {
     web3.setProvider(undefined);
   }
-  new EJS({url: config.homeURL+'/'+'connection_description.ejs'}).update('connection', {connection: connection, contracts: config.contractEtherDeltaAddrs, contractAddr: config.contractEtherDeltaAddr, contractLink: 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/address/'+config.contractEtherDeltaAddr});
+  new EJS({url: config.homeURL+'/templates/'+'connection_description.ejs'}).update('connection', {connection: connection, contracts: config.contractEtherDeltaAddrs, contractAddr: config.contractEtherDeltaAddr, contractLink: 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/address/'+config.contractEtherDeltaAddr});
   return connection;
 }
 Main.loadAccounts = function(callback) {
@@ -4530,7 +4530,7 @@ Main.loadAccounts = function(callback) {
       });
     },
     function(err, addresses) {
-      new EJS({url: config.homeURL+'/'+'addresses.ejs'}).update('addresses', {addresses: addresses, selectedAccount: selectedAccount});
+      new EJS({url: config.homeURL+'/templates/'+'addresses.ejs'}).update('addresses', {addresses: addresses, selectedAccount: selectedAccount});
       callback();
     }
   );
@@ -4544,8 +4544,8 @@ Main.coinAddr = function(addr) {
   }
 }
 Main.displayCoin = function(callback) {
-  new EJS({url: config.homeURL+'/'+'coins.ejs'}).update('coins', {selectedCoin: selectedCoin, coins: config.coins});
-  new EJS({url: config.homeURL+'/'+'coin.ejs'}).update('coin', {});
+  new EJS({url: config.homeURL+'/templates/'+'coins.ejs'}).update('coins', {selectedCoin: selectedCoin, coins: config.coins});
+  new EJS({url: config.homeURL+'/templates/'+'coin.ejs'}).update('coin', {});
   callback();
 }
 Main.displayBalances = function(callback) {
@@ -4580,7 +4580,7 @@ Main.displayBalances = function(callback) {
                         etherDeltaYes = 'https://etherdelta.github.io/#'+selectedCoin.etherDeltaYes;
                         etherDeltaNo = 'https://etherdelta.github.io/#'+selectedCoin.etherDeltaNo;
                       }
-                      new EJS({url: config.homeURL+'/'+'balances.ejs'}).update('balances', {contractLink: contractLink, selectedCoin: selectedCoin, yesAddr: yesAddr, noAddr: noAddr, yesLink: yesLink, noLink: noLink, balanceYes: balanceYes, balanceNo: balanceNo, supplyYes: supplyYes, supplyNo: supplyNo, supplyOutcome: supplyOutcome, resolved: resolved, outcome: outcome, realityUrl: realityUrl, etherDeltaYes: etherDeltaYes, etherDeltaNo: etherDeltaNo});
+                      new EJS({url: config.homeURL+'/templates/'+'balances.ejs'}).update('balances', {contractLink: contractLink, selectedCoin: selectedCoin, yesAddr: yesAddr, noAddr: noAddr, yesLink: yesLink, noLink: noLink, balanceYes: balanceYes, balanceNo: balanceNo, supplyYes: supplyYes, supplyNo: supplyNo, supplyOutcome: supplyOutcome, resolved: resolved, outcome: outcome, realityUrl: realityUrl, etherDeltaYes: etherDeltaYes, etherDeltaNo: etherDeltaNo});
                       $('[data-toggle="tooltip"]').tooltip();
                       callback();
                     });
@@ -4595,11 +4595,12 @@ Main.displayBalances = function(callback) {
   });
 }
 // Main.displayNewForm = function(callback) {
-//   new EJS({url: config.homeURL+'/'+'new_coin.ejs'}).update('new_coin', {});
+//   new EJS({url: config.homeURL+'/templates/'+'new_coin.ejs'}).update('new_coin', {});
 //   callback();
 // }
-Main.displayGuides = function(callback) {
-  new EJS({url: config.homeURL+'/'+'guides.ejs'}).update('guides', {});
+Main.displayContent = function(callback) {
+  new EJS({url: config.homeURL+'/templates/'+'guides.ejs'}).update('guides', {});
+  new EJS({url: config.homeURL+'/templates/'+'family.ejs'}).update('family', {});
   callback();
 }
 Main.loadEvents = function(callback) {
@@ -4650,7 +4651,7 @@ Main.displayEvents = function(callback) {
     function(err, results) {
       pendingTransactions = results.filter(function(x){return x!=undefined});
       //display the template
-      new EJS({url: config.homeURL+'/'+'events.ejs'}).update('events', {selectedAddr: addrs[selectedAccount], selectedCoin: selectedCoin, events: events, myEvents: myEvents, pendingTransactions: pendingTransactions});
+      new EJS({url: config.homeURL+'/templates/'+'events.ejs'}).update('events', {selectedAddr: addrs[selectedAccount], selectedCoin: selectedCoin, events: events, myEvents: myEvents, pendingTransactions: pendingTransactions});
       $('table').stickyTableHeaders({scrollableArea: $('.scroll-container')});
       callback();
     }
@@ -4762,7 +4763,7 @@ Main.init = function(callback) {
   connection = undefined;
   Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
   Main.connectionTest();
-  Main.displayGuides(function(){
+  Main.displayContent(function(){
     Main.loadEvents(function(){
       Main.displayCoin(function(){
         Main.displayBalances(function(){
@@ -5897,17 +5898,17 @@ var configs = {};
 
 //mainnet
 configs["1"] = {
-  homeURL: 'https://outcomecoin.github.io',
-  // homeURL: 'http://0.0.0.0:8080',
-  contractYesNo: 'yesno.sol',
-  contractToken: 'token.sol',
+  // homeURL: 'https://predictiontoken.github.io',
+  homeURL: 'http://localhost:8080',
+  contractYesNo: 'smart_contract/yesno.sol',
+  contractToken: 'smart_contract/token.sol',
   ethTestnet: false,
   ethProvider: 'http://localhost:8545',
   ethGasPrice: 20000000000,
   ethAddr: '0x0000000000000000000000000000000000000123',
   ethAddrPrivateKey: '',
-  userCookie: 'OutcomeCoin',
-  eventsCacheCookie: 'OutcomeCoin_eventsCache',
+  userCookie: 'PredictionToken',
+  eventsCacheCookie: 'PredictionToken_eventsCache',
   coins: [
     {name: 'EPOS', kind: 'YesNo', addr: '0x1e965dcf984cc583a09eed4ce14dbdbbeb1e8e44', etherDeltaYes: 'EPOSY-ETH', etherDeltaNo: 'EPOSN-ETH', title: 'Ethereum to switch to Proof of Stake by July 1, 2017', explanation: 'Ethereum to switch to proof-of-stake by July 1, 2017. The definition of whether a given chain is "Ethereum" will be settled at the discretion of Reality Keys. Will be settled early if Ethereum switches to proof-of-stake before the specified date.'},
     {name: 'ETCW', kind: 'YesNo', addr: '0xc40c7b13596adc8d6f6f56955488f16aac3b214f', etherDeltaYes: 'ETCWY-ETH', etherDeltaNo: 'ETCWN-ETH', title: 'ETC to be higher than ETH on January 1, 2017', explanation: 'The ETC/ETH currency pair to be higher than 1.0 on January 1, 2017.'},
@@ -5917,17 +5918,17 @@ configs["1"] = {
 
 //testnet
 configs["2"] = {
-  homeURL: 'https://outcomecoin.github.io',
-  // homeURL: 'http://0.0.0.0:8080',
-  contractYesNo: 'yesno.sol',
-  contractToken: 'token.sol',
+  // homeURL: 'https://predictiontoken.github.io',
+  homeURL: 'http://localhost:8080',
+  contractYesNo: 'smart_contract/yesno.sol',
+  contractToken: 'smart_contract/token.sol',
   ethTestnet: true,
   ethProvider: 'http://localhost:8545',
   ethGasPrice: 20000000000,
   ethAddr: '0x0000000000000000000000000000000000000123',
   ethAddrPrivateKey: '',
-  userCookie: 'OutcomeCoin_testnet',
-  eventsCacheCookie: 'OutcomeCoin_eventsCache_testnet',
+  userCookie: 'PredictionToken_testnet',
+  eventsCacheCookie: 'PredictionToken_eventsCache_testnet',
   coins: [
     {name: 'Hardfork', kind: 'YesNo', addr: '0xd6da98a749ae32d49bed061db4dc11fe5bb1e505', etherDeltaYes: 'HFYES-ETH', etherDeltaNo: 'HFNO-ETH', title: 'Ethereum to hard-fork to retrieve DAO funds', explanation: 'A successful hard fork to take place allowing the recovery of some or all funds taken through bugs in The DAO'},
     {name: 'Zero', kind: 'YesNo', addr: '0x0000000000000000000000000000000000000000', etherDeltaYes: undefined, etherDeltaNo: undefined, title: 'Not a real token', explanation: 'Not a real token'},

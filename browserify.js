@@ -146,7 +146,7 @@ Main.connectionTest = function() {
   } catch(err) {
     web3.setProvider(undefined);
   }
-  new EJS({url: config.homeURL+'/'+'connection_description.ejs'}).update('connection', {connection: connection, contracts: config.contractEtherDeltaAddrs, contractAddr: config.contractEtherDeltaAddr, contractLink: 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/address/'+config.contractEtherDeltaAddr});
+  new EJS({url: config.homeURL+'/templates/'+'connection_description.ejs'}).update('connection', {connection: connection, contracts: config.contractEtherDeltaAddrs, contractAddr: config.contractEtherDeltaAddr, contractLink: 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/address/'+config.contractEtherDeltaAddr});
   return connection;
 }
 Main.loadAccounts = function(callback) {
@@ -165,7 +165,7 @@ Main.loadAccounts = function(callback) {
       });
     },
     function(err, addresses) {
-      new EJS({url: config.homeURL+'/'+'addresses.ejs'}).update('addresses', {addresses: addresses, selectedAccount: selectedAccount});
+      new EJS({url: config.homeURL+'/templates/'+'addresses.ejs'}).update('addresses', {addresses: addresses, selectedAccount: selectedAccount});
       callback();
     }
   );
@@ -179,8 +179,8 @@ Main.coinAddr = function(addr) {
   }
 }
 Main.displayCoin = function(callback) {
-  new EJS({url: config.homeURL+'/'+'coins.ejs'}).update('coins', {selectedCoin: selectedCoin, coins: config.coins});
-  new EJS({url: config.homeURL+'/'+'coin.ejs'}).update('coin', {});
+  new EJS({url: config.homeURL+'/templates/'+'coins.ejs'}).update('coins', {selectedCoin: selectedCoin, coins: config.coins});
+  new EJS({url: config.homeURL+'/templates/'+'coin.ejs'}).update('coin', {});
   callback();
 }
 Main.displayBalances = function(callback) {
@@ -215,7 +215,7 @@ Main.displayBalances = function(callback) {
                         etherDeltaYes = 'https://etherdelta.github.io/#'+selectedCoin.etherDeltaYes;
                         etherDeltaNo = 'https://etherdelta.github.io/#'+selectedCoin.etherDeltaNo;
                       }
-                      new EJS({url: config.homeURL+'/'+'balances.ejs'}).update('balances', {contractLink: contractLink, selectedCoin: selectedCoin, yesAddr: yesAddr, noAddr: noAddr, yesLink: yesLink, noLink: noLink, balanceYes: balanceYes, balanceNo: balanceNo, supplyYes: supplyYes, supplyNo: supplyNo, supplyOutcome: supplyOutcome, resolved: resolved, outcome: outcome, realityUrl: realityUrl, etherDeltaYes: etherDeltaYes, etherDeltaNo: etherDeltaNo});
+                      new EJS({url: config.homeURL+'/templates/'+'balances.ejs'}).update('balances', {contractLink: contractLink, selectedCoin: selectedCoin, yesAddr: yesAddr, noAddr: noAddr, yesLink: yesLink, noLink: noLink, balanceYes: balanceYes, balanceNo: balanceNo, supplyYes: supplyYes, supplyNo: supplyNo, supplyOutcome: supplyOutcome, resolved: resolved, outcome: outcome, realityUrl: realityUrl, etherDeltaYes: etherDeltaYes, etherDeltaNo: etherDeltaNo});
                       $('[data-toggle="tooltip"]').tooltip();
                       callback();
                     });
@@ -230,11 +230,12 @@ Main.displayBalances = function(callback) {
   });
 }
 // Main.displayNewForm = function(callback) {
-//   new EJS({url: config.homeURL+'/'+'new_coin.ejs'}).update('new_coin', {});
+//   new EJS({url: config.homeURL+'/templates/'+'new_coin.ejs'}).update('new_coin', {});
 //   callback();
 // }
-Main.displayGuides = function(callback) {
-  new EJS({url: config.homeURL+'/'+'guides.ejs'}).update('guides', {});
+Main.displayContent = function(callback) {
+  new EJS({url: config.homeURL+'/templates/'+'guides.ejs'}).update('guides', {});
+  new EJS({url: config.homeURL+'/templates/'+'family.ejs'}).update('family', {});
   callback();
 }
 Main.loadEvents = function(callback) {
@@ -285,7 +286,7 @@ Main.displayEvents = function(callback) {
     function(err, results) {
       pendingTransactions = results.filter(function(x){return x!=undefined});
       //display the template
-      new EJS({url: config.homeURL+'/'+'events.ejs'}).update('events', {selectedAddr: addrs[selectedAccount], selectedCoin: selectedCoin, events: events, myEvents: myEvents, pendingTransactions: pendingTransactions});
+      new EJS({url: config.homeURL+'/templates/'+'events.ejs'}).update('events', {selectedAddr: addrs[selectedAccount], selectedCoin: selectedCoin, events: events, myEvents: myEvents, pendingTransactions: pendingTransactions});
       $('table').stickyTableHeaders({scrollableArea: $('.scroll-container')});
       callback();
     }
@@ -397,7 +398,7 @@ Main.init = function(callback) {
   connection = undefined;
   Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
   Main.connectionTest();
-  Main.displayGuides(function(){
+  Main.displayContent(function(){
     Main.loadEvents(function(){
       Main.displayCoin(function(){
         Main.displayBalances(function(){
