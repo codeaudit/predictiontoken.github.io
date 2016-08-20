@@ -1,0 +1,34 @@
+<div class="box-container">
+  <div class="row">
+    <div class="col-xs-6">
+      <h3>New OutcomeCoin</h3>
+      <form class="form">
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon" style="width: 165px;">Reality Keys API URL</div>
+            <input type="text" class="form-control" style="width: 225px;" id="new_reality_url" placeholder="http://" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon" style="width: 165px;">Ethereum address</div>
+            <input type="text" class="form-control" style="width: 225px;" id="new_ethddr" placeholder="Address (0x...)" />
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-group">
+            <div class="input-group-addon" style="width: 165px;">Fact hash</div>
+            <input type="text" class="form-control" style="width: 225px;" id="new_facthash" placeholder="Hash (0x...)" />
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 275px;" id="new_submit">Deploy smart contract</button>
+      </form>
+    </div>
+    <div class="col-xs-6">
+      <p class="margin-top">Use <a href="https://realitykeys.com">Reality Keys</a> to select a fact for your OutcomeCoin. The fact should be a Yes or No fact that will resolve to either 0 or 1.</p>
+      <p>For example: <a href="https://www.realitykeys.com/human/9482">https://www.realitykeys.com/human/9482</a> (this fact has already been resolved). Click "See the signature" to see the Ethereum address, fact hash, and API URL.</p>
+      <p>When you press "New smart contract," a new OutcomeCoin smart contract will be created. This is the smart contract you can use to create and redeem Yes and No tokens. Separate smart contracts for the actual Yes and No tokens will also be created.</p>
+      <p>OutcomeCoin is open source on <a href="https://github.com/outcomecoin/outcomecoin.github.io">GitHub</a>.</p>
+    </div>
+  </div>
+</div>

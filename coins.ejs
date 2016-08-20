@@ -1,0 +1,6 @@
+<a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><%= selectedCoin.title %> <span class="caret"></span></a>
+<ul class="dropdown-menu">
+  <% coins.forEach(function(coin){ %>
+    <li><a href="javascript:;" onclick="bundle.Main.coinAddr('<%= coin.addr %>');"><%= coin.title %></a></li>
+  <% }); %>
+</ul>

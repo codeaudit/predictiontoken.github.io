@@ -1,0 +1,87 @@
+<div class="box-container">
+  <div style="margin-top: 20px;">
+
+    <ul class="nav nav-tabs" role="tablist">
+      <li role="presentation" class="active"><a href="#all" aria-controls="all" role="tab" data-toggle="tab">All transactions</a></li>
+      <li role="presentation"><a href="#my" aria-controls="my" role="tab" data-toggle="tab">My transactions</a></li>
+    </ul>
+
+    <div class="tab-content">
+      <div role="tabpanel" class="tab-pane active" id="all">
+        <div class="scroll-container" style="height: 200px;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Block</th>
+                <th>Type</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% pendingTransactions.forEach(function(pendingTransaction){ %>
+                <tr>
+                  <td>??? <a href="<%= pendingTransaction.txLink %>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>
+                  <td><span class="label label-warning">Pending</span></td>
+                  <td></td>
+                </tr>
+              <% }) %>
+              <% events.forEach(function(event){ %>
+                <% if (event.event=='Create' && event.args.value>0) { %>
+                  <tr>
+                    <td><%= event.blockNumber %> <a href="<%= event.txLink %>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>
+                    <td><span class="label label-success">Create</span></td>
+                    <td><%= bundle.utility.weiToEth(event.args.value) %> ETH &rarr; <%= bundle.utility.weiToEth(event.args.value) %> YES + <%= bundle.utility.weiToEth(event.args.value) %> NO</td>
+                  </tr>
+                <% } else if (event.event=='Redeem' && event.args.value>0) { %>
+                  <tr>
+                    <td><%= event.blockNumber %> <a href="<%= event.txLink %>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>
+                    <td><span class="label label-info">Redeem</span></td>
+                    <td><%= bundle.utility.weiToEth(event.args.yesTokens) %> YES + <%= bundle.utility.weiToEth(event.args.noTokens) %> NO &rarr; <%= bundle.utility.weiToEth(event.args.value) %> ETH</td>
+                  </tr>
+                <% } %>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div role="tabpanel" class="tab-pane" id="my">
+        <div class="scroll-container" style="height: 200px;">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Block</th>
+                <th>Type</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% pendingTransactions.forEach(function(pendingTransaction){ %>
+                <tr>
+                  <td>??? <a href="<%= pendingTransaction.txLink %>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>
+                  <td><span class="label label-warning">Pending</span></td>
+                  <td></td>
+                </tr>
+              <% }) %>
+              <% myEvents.forEach(function(event){ %>
+                <% if (event.event=='Create' && event.args.value>0) { %>
+                  <tr>
+                    <td><%= event.blockNumber %> <a href="<%= event.txLink %>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>
+                    <td><span class="label label-success">Create</span></td>
+                    <td><%= bundle.utility.weiToEth(event.args.value) %> ETH &rarr; <%= bundle.utility.weiToEth(event.args.value) %> YES + <%= bundle.utility.weiToEth(event.args.value) %> NO</td>
+                  </tr>
+                <% } else if (event.event=='Redeem' && event.args.value>0) { %>
+                  <tr>
+                    <td><%= event.blockNumber %> <a href="<%= event.txLink %>" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a></td>
+                    <td><span class="label label-info">Redeem</span></td>
+                    <td><%= bundle.utility.weiToEth(event.args.yesTokens) %> YES + <%= bundle.utility.weiToEth(event.args.noTokens) %> NO &rarr; <%= bundle.utility.weiToEth(event.args.value) %> ETH</td>
+                  </tr>
+                <% } %>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

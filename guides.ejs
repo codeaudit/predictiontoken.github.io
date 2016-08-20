@@ -1,0 +1,44 @@
+<div class="box-container" style="padding-top: 20px;">
+  <ul class="nav nav-tabs" role="tablist">
+    <li role="presentation" class="active"><a href="#fees" aria-controls="fees" role="tab" data-toggle="tab">Fees</a></li>
+    <li role="presentation"><a href="#connect-ethereum" aria-controls="connect-ethereum" role="tab" data-toggle="tab">Connect to Ethereum</a></li>
+    <li role="presentation"><a href="#create-redeem" aria-controls="create-redeem" role="tab" data-toggle="tab">Create and redeem</a></li>
+  </ul>
+  <div class="tab-content list-spacing padding">
+    <div role="tabpanel" class="tab-pane active" id="fees">
+      <h3>Fees</h3>
+      <table class="table">
+        <tr>
+          <th>Transaction</th>
+          <th>Fee</th>
+        </tr>
+        <tr>
+          <td>Create</td>
+          <td>0.0%</td>
+        </tr>
+        <tr>
+          <td>Redeem</td>
+          <td>0.5%</td>
+        </tr>
+      </table>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="connect-ethereum">
+      <h3>Connect to Ethereum</h3>
+      <p>There are three ways you can connect to the Ethereum network.
+      <ol>
+        <li>Connect to the Ethereum network through <a href="https://metamask.io">MetaMask</a>. MetaMask is a Chrome plugin that lets you manage your Ethereum accounts and sign transactions on a case by case basis. If you are using MetaMask, your MetaMask account will automatically appear in the account dropdown.</li>
+        <li>Connect to Ethereum via the Mist browser.</li>
+        <li>Connect to Ethereum through the Etherscan API. This is the default option if you don't have MetaMask or Mist. You will need to create a new account by clicking "Create account" under the address dropdown. You should export the private key and write it down by clicking "Export private key" under the address dropdown. If you prefer, you can also use <a href="http://www.myetherwallet.com/" target="_blank">MyEtherWallet</a> to create a new Ethereum account, then use "Import account" to add your new address and its private key.</li>
+      </ol>
+    </div>
+    <div role="tabpanel" class="tab-pane" id="create-redeem">
+      <h3>Create and redeem</h3>
+      <ol>
+        <li>To create Yes and No tokens, specify an amount and press "Create". This will send Ether to the Create/redeem smart contract. If you send X Ether, you will receive X Yes tokens and X No tokens.</li>
+        <li>To redeem Yes and No tokens, specify an amount and press "Redeem." If you choose to redeem X tokens, then X Yes tokens and X No tokens will be destroyed and you will receive X Ether in return. You must have at least X Yes tokens and X No tokens in your account in order to redeem for X Ether.</li>
+        <li>If the outcome has been resolved, then redeeming will only require either Yes or No tokens. For example, if the outcome resolves to Yes, then redeeming X tokens will destroy X Yes tokens and you will receive X Ether in return.</li>
+      </ol>
+    </div>
+    <p>Need help? Join the <a href="https://gitter.im/outcomecoin/outcomecoin.github.io" target="_blank"><img src="https://badges.gitter.im/outcomecoin/outcomecoin.github.io.svg" alt="Chat on Gitter" /></a></p>
+  </div>
+</div>
