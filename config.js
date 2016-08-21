@@ -14,9 +14,9 @@ configs["1"] = {
   userCookie: 'PredictionToken',
   eventsCacheCookie: 'PredictionToken_eventsCache',
   coins: [
+    {name: 'TRMP', kind: 'YesNo', addr: '0xc39d73fca64d4ffe2c78fb17e61b9c8489f7c5fb', etherDeltaYes: 'TRMPY-ETH', etherDeltaNo: 'TRMPN-ETH', title: 'Donald Trump to win the 2016 US presidential election', explanation: 'Donald Trump to win the US presidential election currently scheduled to take place in November, 2016. Settlement may be delayed if the result is unclear.'},
     {name: 'EPOS', kind: 'YesNo', addr: '0x1e965dcf984cc583a09eed4ce14dbdbbeb1e8e44', etherDeltaYes: 'EPOSY-ETH', etherDeltaNo: 'EPOSN-ETH', title: 'Ethereum to switch to Proof of Stake by July 1, 2017', explanation: 'Ethereum to switch to proof-of-stake by July 1, 2017. The definition of whether a given chain is "Ethereum" will be settled at the discretion of Reality Keys. Will be settled early if Ethereum switches to proof-of-stake before the specified date.'},
     {name: 'ETCW', kind: 'YesNo', addr: '0xc40c7b13596adc8d6f6f56955488f16aac3b214f', etherDeltaYes: 'ETCWY-ETH', etherDeltaNo: 'ETCWN-ETH', title: 'ETC to be higher than ETH on January 1, 2017', explanation: 'The ETC/ETH currency pair to be higher than 1.0 on January 1, 2017.'},
-    {name: 'TRMP', kind: 'YesNo', addr: '0xc39d73fca64d4ffe2c78fb17e61b9c8489f7c5fb', etherDeltaYes: 'TRMPY-ETH', etherDeltaNo: 'TRMPN-ETH', title: 'Donald Trump to win the 2016 US presidential election', explanation: 'Donald Trump to win the US presidential election currently scheduled to take place in November, 2016. Settlement may be delayed if the result is unclear.'},
   ]
 };
 
