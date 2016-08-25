@@ -149,7 +149,7 @@ Main.connectionTest = function() {
   new EJS({url: config.homeURL+'/templates/'+'connection_description.ejs'}).update('connection', {connection: connection, contracts: config.contractEtherDeltaAddrs, contractAddr: config.contractEtherDeltaAddr, contractLink: 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/address/'+config.contractEtherDeltaAddr});
   return connection;
 }
-Main.loadAccounts = function(callback) {
+Main.displayAccounts = function(callback) {
   if (Main.connectionTest().connection=='RPC') {
     $('#pk_div').hide();
   }
@@ -255,16 +255,18 @@ Main.loadEvents = function(callback) {
         }
       }
     }
-    utility.logs(web3, contractYesNo, selectedCoin.addr, startBlock, 'latest', function(err, event) {
-      event.txLink = 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/tx/'+event.transactionHash;
-      eventsCache[event.transactionHash+event.logIndex] = event;
+    utility.logsOnce(web3, contractYesNo, selectedCoin.addr, startBlock, 'latest', function(err, events) {
+      var newEvents = 0;
+      events.forEach(function(event){
+        if (!eventsCache[event.transactionHash+event.logIndex]) {
+          newEvents++;
+          event.txLink = 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/tx/'+event.transactionHash;
+          eventsCache[event.transactionHash+event.logIndex] = event;
+        }
+      })
       Main.createCookie(config.eventsCacheCookie, JSON.stringify(eventsCache), 999);
-      Main.displayEvents(function(){
-        Main.displayBalances(function(){
-        });
-      });
+      callback(newEvents);
     });
-    callback();
   });
 }
 Main.displayEvents = function(callback) {
@@ -367,22 +369,22 @@ Main.addPending = function(err, tx) {
 Main.updateUrl = function() {
   window.location.hash = '#'+selectedCoin.name;
 }
-Main.refresh = function(callback) {
-  if (refreshing<=0 || Date.now()-lastRefresh>60*1000) {
-    refreshing = 2;
+Main.refresh = function(callback, force) {
+  if (!lastRefresh || Date.now()-lastRefresh>60*1000 || force) {
+    console.log('Refreshing');
+    if (!lastRefresh) force = true;
+    lastRefresh = Date.now();
     Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
     Main.connectionTest();
     Main.updateUrl();
-    Main.loadAccounts(function(){
-      Main.displayBalances(function(){
-        Main.displayEvents(function(){
-          refreshing--;
-        });
-      });
+    Main.loadEvents(function(newEvents){
+      if (newEvents>0 || force) {
+        Main.displayAccounts(function(){});
+        Main.displayBalances(function(){});
+        Main.displayEvents(function(){});
+      }
+      $('#loading').hide();
     });
-    $('#loading').hide();
-    refreshing--;
-    lastRefresh = Date.now();
     callback();
   }
 }
@@ -398,17 +400,9 @@ Main.init = function(callback) {
   connection = undefined;
   Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
   Main.connectionTest();
-  Main.displayContent(function(){
-    Main.loadEvents(function(){
-      Main.displayCoin(function(){
-        Main.displayBalances(function(){
-          Main.displayEvents(function(){
-            callback();
-          });
-        });
-      });
-    });
-  });
+  Main.displayContent(function(){});
+  Main.displayCoin(function(){});
+  callback();
 }
 
 //globals
@@ -419,8 +413,7 @@ var cookie;
 var connection = undefined;
 var nonce = undefined;
 var eventsCache = {};
-var refreshing = 0;
-var lastRefresh = Date.now();
+var lastRefresh = undefined;
 var contractYesNo = undefined;
 var contractToken = undefined;
 var pendingTransactions = [];

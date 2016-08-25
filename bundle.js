@@ -4514,7 +4514,7 @@ Main.connectionTest = function() {
   new EJS({url: config.homeURL+'/templates/'+'connection_description.ejs'}).update('connection', {connection: connection, contracts: config.contractEtherDeltaAddrs, contractAddr: config.contractEtherDeltaAddr, contractLink: 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/address/'+config.contractEtherDeltaAddr});
   return connection;
 }
-Main.loadAccounts = function(callback) {
+Main.displayAccounts = function(callback) {
   if (Main.connectionTest().connection=='RPC') {
     $('#pk_div').hide();
   }
@@ -4620,16 +4620,18 @@ Main.loadEvents = function(callback) {
         }
       }
     }
-    utility.logs(web3, contractYesNo, selectedCoin.addr, startBlock, 'latest', function(err, event) {
-      event.txLink = 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/tx/'+event.transactionHash;
-      eventsCache[event.transactionHash+event.logIndex] = event;
+    utility.logsOnce(web3, contractYesNo, selectedCoin.addr, startBlock, 'latest', function(err, events) {
+      var newEvents = 0;
+      events.forEach(function(event){
+        if (!eventsCache[event.transactionHash+event.logIndex]) {
+          newEvents++;
+          event.txLink = 'http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/tx/'+event.transactionHash;
+          eventsCache[event.transactionHash+event.logIndex] = event;
+        }
+      })
       Main.createCookie(config.eventsCacheCookie, JSON.stringify(eventsCache), 999);
-      Main.displayEvents(function(){
-        Main.displayBalances(function(){
-        });
-      });
+      callback(newEvents);
     });
-    callback();
   });
 }
 Main.displayEvents = function(callback) {
@@ -4732,22 +4734,22 @@ Main.addPending = function(err, tx) {
 Main.updateUrl = function() {
   window.location.hash = '#'+selectedCoin.name;
 }
-Main.refresh = function(callback) {
-  if (refreshing<=0 || Date.now()-lastRefresh>60*1000) {
-    refreshing = 2;
+Main.refresh = function(callback, force) {
+  if (!lastRefresh || Date.now()-lastRefresh>60*1000 || force) {
+    console.log('Refreshing');
+    if (!lastRefresh) force = true;
+    lastRefresh = Date.now();
     Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
     Main.connectionTest();
     Main.updateUrl();
-    Main.loadAccounts(function(){
-      Main.displayBalances(function(){
-        Main.displayEvents(function(){
-          refreshing--;
-        });
-      });
+    Main.loadEvents(function(newEvents){
+      if (newEvents>0 || force) {
+        Main.displayAccounts(function(){});
+        Main.displayBalances(function(){});
+        Main.displayEvents(function(){});
+      }
+      $('#loading').hide();
     });
-    $('#loading').hide();
-    refreshing--;
-    lastRefresh = Date.now();
     callback();
   }
 }
@@ -4763,17 +4765,9 @@ Main.init = function(callback) {
   connection = undefined;
   Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
   Main.connectionTest();
-  Main.displayContent(function(){
-    Main.loadEvents(function(){
-      Main.displayCoin(function(){
-        Main.displayBalances(function(){
-          Main.displayEvents(function(){
-            callback();
-          });
-        });
-      });
-    });
-  });
+  Main.displayContent(function(){});
+  Main.displayCoin(function(){});
+  callback();
 }
 
 //globals
@@ -4784,8 +4778,7 @@ var cookie;
 var connection = undefined;
 var nonce = undefined;
 var eventsCache = {};
-var refreshing = 0;
-var lastRefresh = Date.now();
+var lastRefresh = undefined;
 var contractYesNo = undefined;
 var contractToken = undefined;
 var pendingTransactions = [];
@@ -5266,6 +5259,49 @@ function logs(web3, contract, address, fromBlock, toBlock, callback) {
   // } catch (err) {
   //   proxy(1);
   // }
+  proxy(1);
+}
+
+function logsOnce(web3, contract, address, fromBlock, toBlock, callback) {
+  var options = {fromBlock: fromBlock, toBlock: toBlock, address: address};
+  function decodeEvent(item) {
+    eventAbis = contract.abi.filter(function(eventAbi){return eventAbi.type=='event' && item.topics[0]=='0x'+sha3(eventAbi.name+'('+eventAbi.inputs.map(function(x) {return x.type}).join()+')')});
+    if (eventAbis.length>0) {
+      var eventAbi = eventAbis[0];
+      var event = new SolidityEvent(web3, eventAbi, address);
+      var result = event.decode(item);
+      return result;
+    } else {
+      return undefined;
+    }
+  }
+  function proxy(retries) {
+    var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=logs&action=getLogs&address='+address+'&fromBlock='+fromBlock+'&toBlock='+toBlock;
+    request.get(url, function(err, httpResponse, body){
+      if (!err) {
+        try {
+          var result = JSON.parse(body);
+          var items = result['result'];
+          async.map(items,
+            function(item, callbackMap){
+              item.blockNumber = hexToDec(item.blockNumber);
+              item.logIndex = hexToDec(item.logIndex);
+              item.transactionIndex = hexToDec(item.transactionIndex);
+              var event = decodeEvent(item);
+              callbackMap(null, event);
+            },
+            function(err, events){
+              callback(null, events);
+            }
+          );
+        } catch (err) {
+          if (retries>0) {
+            proxy(retries-1)
+          }
+        }
+      }
+    });
+  }
   proxy(1);
 }
 
@@ -5874,6 +5910,7 @@ exports.testCall = testCall;
 exports.estimateGas = estimateGas;
 exports.txReceipt = txReceipt;
 exports.logs = logs;
+exports.logsOnce = logsOnce;
 exports.blockNumber = blockNumber;
 exports.sign = sign;
 exports.verify = verify;

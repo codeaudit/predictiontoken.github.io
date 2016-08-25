@@ -1,0 +1,39 @@
+How to bet on (or against) Trump using PredictionToken
+[Title screen]
+Think of PredictionToken as a factory with machines that mint tokens.
+[Show factory with machines]
+Each machine specializes in coins associated with a particular event.
+[Show machines each with different characteristics]
+For example, this machine asks the question "Will Trump win the election?"
+[Highlight one machine with Trump on top]
+Each machine, which is actually an Ethereum smart contract, has two main functions: create and redeem.
+[Show two levers, create and redeem]
+At any time, you can turn any amount of Ether into the same amount of Trump Yes and Trump No tokens.
+[Show Ether going into tube, pull create lever, Yes and No tokens come out]
+[Show more Ether going in, more tokens coming out]
+Up until the election is over, you can always redeem your 1 Trump Yes and 1 Trump No token back into 1 Ether.
+[Show 1 Yes and 1 No Token redeemed for 1 Ether, then show more]
+When the election is over, the trusted Oracle Reality Keys will determine whether Trump won and cryptographically sign the result.
+[Show Trump and Hillary on balance, show Trump weighing more]
+If Trump is the winner, then you can redeem Trump Yes tokens back into Ether, and Trump No tokens are worth nothing.
+[Show redemption with the Yes tokens, fade away the No tokens]
+If Trump is the loser, then you can redeem Trump No tokens back into Ether, and Trump Yes tokens are worth nothing.
+[Show redemption with the No tokens, fade away the Yes tokens]
+So how exactly do you bet on or against Trump using the tokens you created?
+[Show greedy guy]
+Simply head to EtherDelta, the official decentralized exchange for PredictionToken.
+[EtherDelta logo, screenshot]
+If you think Trump will win, you can sell your Trump no token.
+[Show greedy dude offering his Trump no token]
+If you think Trump will lose, you can sell your Trump yes token.
+[Show greedy dude offering his Trump yes token]
+Suppose you think Trump will lose, so you offer your Trump Yes token for 0.2 Ether.
+[Show offer price of 0.2 Ether]
+If someone takes your offer, then you have now paid 0.8 Ether (1 Ether to mint the tokens, minus 0.2 Ether to sell the Trump Yes token).
+[Show someone taking the offer]
+And you own 1 Trump No token.
+[Show Greedy guy's balance]
+If Trump loses, you can redeem the Trump No token for 1 Ether, and your overall profit will be 0.2 Ether.
+[Show balance effect and happy guy]
+If Trump wins, your Trump No token is worthless, and you overall loss will be 0.8 Ether.
+[Show balance effect and unhappy guy]
