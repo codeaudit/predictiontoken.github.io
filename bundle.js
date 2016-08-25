@@ -4750,8 +4750,8 @@ Main.refresh = function(callback, force) {
       }
       $('#loading').hide();
     });
-    callback();
   }
+  callback();
 }
 Main.refreshLoop = function() {
   function loop() {
