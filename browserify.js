@@ -174,7 +174,9 @@ Main.coinAddr = function(addr) {
   var i = config.coins.map(function(x){return x.addr}).indexOf(addr);
   if (i>=0) {
     selectedCoin = config.coins[i];
-    Main.init(function(){});
+    Main.init(function(){
+      Main.refresh(function(){}, true);
+    });
     Main.updateUrl();
   }
 }
