@@ -4938,6 +4938,7 @@ function call(web3, contract, address, functionName, args, callback) {
     var data = contract[functionName].getData.apply(null, args);
     var result = undefined;
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=proxy&action=eth_Call&to='+address+'&data='+data;
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, function(err, httpResponse, body){
       if (!err) {
         try {
@@ -5076,7 +5077,9 @@ function send(web3, contract, address, functionName, args, fromAddress, privateK
         if (!err) {
           var serializedTx = tx.serialize().toString('hex');
           var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api';
-          request.post({url: url, form: {module: 'proxy', action: 'eth_sendRawTransaction', hex: serializedTx}}, function(err, httpResponse, body){
+          var formData = {module: 'proxy', action: 'eth_sendRawTransaction', hex: serializedTx};
+          if (config.etherscanAPIKey) formData.apikey = config.etherscanAPIKey;
+          request.post({url: url, form: formData}, function(err, httpResponse, body){
             if (!err) {
               try {
                 var result = JSON.parse(body);
@@ -5173,6 +5176,7 @@ function estimateGas(web3, contract, address, functionName, args, fromAddress, p
 function txReceipt(web3, txHash, callback) {
   function proxy(){
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=proxy&action=eth_GetTransactionReceipt&txhash='+txHash;
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, function(err, httpResponse, body){
       if (!err) {
         result = JSON.parse(body);
@@ -5216,6 +5220,7 @@ function logs(web3, contract, address, fromBlock, toBlock, callback) {
   }
   function proxy(retries) {
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=logs&action=getLogs&address='+address+'&fromBlock='+fromBlock+'&toBlock='+toBlock;
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, function(err, httpResponse, body){
       if (!err) {
         try {
@@ -5279,6 +5284,7 @@ function logsOnce(web3, contract, address, fromBlock, toBlock, callback) {
   }
   function proxy(retries) {
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=logs&action=getLogs&address='+address+'&fromBlock='+fromBlock+'&toBlock='+toBlock;
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, {timeout: 1500}, function(err, httpResponse, body){
       if (!err) {
         try {
@@ -5314,6 +5320,7 @@ function logsOnce(web3, contract, address, fromBlock, toBlock, callback) {
 function getBalance(web3, address, callback) {
   function proxy(){
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=account&action=balance&address='+address+'&tag=latest';
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, function(err, httpResponse, body){
       if (!err) {
         result = JSON.parse(body);
@@ -5343,6 +5350,7 @@ function getBalance(web3, address, callback) {
 function getCode(web3, address, callback) {
   function proxy(){
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=proxy&action=eth_getCode&address='+address+'&tag=latest';
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, function(err, httpResponse, body){
       if (!err) {
         result = JSON.parse(body);
@@ -5372,6 +5380,7 @@ function getCode(web3, address, callback) {
 function getNextNonce(web3, address, callback) {
   function proxy(){
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=proxy&action=eth_GetTransactionCount&address='+address+'&tag=latest';
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, function(err, httpResponse, body){
       if (!err) {
         result = JSON.parse(body);
@@ -5404,6 +5413,7 @@ function getNextNonce(web3, address, callback) {
 function blockNumber(web3, callback) {
   function proxy() {
     var url = 'https://'+(config.ethTestnet ? 'testnet' : 'api')+'.etherscan.io/api?module=proxy&action=eth_BlockNumber';
+    if (config.etherscanAPIKey) url += '&apikey='+config.etherscanAPIKey;
     request.get(url, function(err, httpResponse, body){
       if (!err) {
         var result = JSON.parse(body);
