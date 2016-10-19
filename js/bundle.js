@@ -5787,11 +5787,9 @@ Main.displayCoin = function(callback) {
     });
   });
 }
-// Main.displayNewForm = function(callback) {
-//   new EJS({url: config.homeURL+'/templates/'+'new_coin.ejs'}).update('new_coin', {});
-//   callback();
-// }
 Main.displayContent = function(callback) {
+  new EJS({url: config.homeURL+'/templates/'+'coin_form.ejs'}).update('coin_form', {});
+  new EJS({url: config.homeURL+'/templates/'+'explanation.ejs'}).update('explanation', {});
   new EJS({url: config.homeURL+'/templates/'+'guides.ejs'}).update('guides', {});
   new EJS({url: config.homeURL+'/templates/'+'family.ejs'}).update('family', {});
   callback();

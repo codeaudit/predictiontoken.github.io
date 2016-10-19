@@ -1,108 +1,64 @@
-<div class="box-container">
-  <div class="row">
-    <div class="col-xs-6">
-      <div>
-        <h3><%= selectedCoin.title %></h3>
-        <p><%= selectedCoin.explanation %></p>
+<h3><%= selectedCoin.title %></h3>
+<p><%= selectedCoin.explanation %></p>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Token</th>
-              <th>My balance</th>
-              <th>Total supply</th>
-              <th>Trade</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="<%= yesLink %>" target="_blank">Yes</a></td>
-              <td><%= bundle.utility.weiToEth(balanceYes) %> YES</td>
-              <td><%= bundle.utility.weiToEth(supplyYes) %> YES</td>
-              <td>
-                <% if (etherDeltaYes) { %>
-                  <a href="<%= etherDeltaYes %>" target="_blank"><%= selectedCoin.name+'Y' %></a>
-                <% } %>
-              </td>
-            </tr>
-            <tr>
-              <td><a href="<%= noLink %>" target="_blank">No</a></td>
-              <td><%= bundle.utility.weiToEth(balanceNo) %> NO</td>
-              <td><%= bundle.utility.weiToEth(supplyNo) %> NO</td>
-              <td>
-                <% if (etherDeltaNo) { %>
-                  <a href="<%= etherDeltaNo %>" target="_blank"><%= selectedCoin.name+'N' %></a>
-                <% } %>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Token</th>
+      <th>My balance</th>
+      <th>Total supply</th>
+      <th>Trade</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="<%= yesLink %>" target="_blank">Yes</a></td>
+      <td><%= bundle.utility.weiToEth(balanceYes) %> YES</td>
+      <td><%= bundle.utility.weiToEth(supplyYes) %> YES</td>
+      <td>
+        <% if (etherDeltaYes) { %>
+          <a href="<%= etherDeltaYes %>" target="_blank"><%= selectedCoin.name+'Y' %></a>
+        <% } %>
+      </td>
+    </tr>
+    <tr>
+      <td><a href="<%= noLink %>" target="_blank">No</a></td>
+      <td><%= bundle.utility.weiToEth(balanceNo) %> NO</td>
+      <td><%= bundle.utility.weiToEth(supplyNo) %> NO</td>
+      <td>
+        <% if (etherDeltaNo) { %>
+          <a href="<%= etherDeltaNo %>" target="_blank"><%= selectedCoin.name+'N' %></a>
+        <% } %>
+      </td>
+    </tr>
+  </tbody>
+</table>
 
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Reality Keys</th>
-              <th>Smart contract</th>
-              <th>Balance</th>
-              <th>Outcome</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><a href="<%= realityUrl.replace('/api/v1','') %>" target="_blank">Description</a> (<a href="<%= realityUrl %>" target="_blank">API</a>)</td>
-              <td><a href="<%= contractLink %>" target="_blank">Create/redeem</a></td>
-              <td><%= bundle.utility.weiToEth(supplyOutcome) %> ETH</td>
-              <td>
-                <% if (resolved) { %>
-                  <% if (outcome==0) { %>
-                    No
-                  <% } else if (outcome==1) { %>
-                    Yes
-                  <% } %>
-                <% } else { %>
-                  Unresolved
-                <% } %>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="row">
-        <div class="col-xs-6">
-          <h3>Create</h3>
-          <form class="form-inline">
-            <div class="form-group">
-              <div class="input-group">
-                <input type="text" class="form-control"  style="width:100px;" id="create_amount" placeholder="Amount" />
-              </div>
-            </div>
-            <button type="button" class="btn btn-primary" id="create_submit" style="width:85px;">Create</button>
-          </form>
-        </div>
-        <div class="col-xs-6">
-          <h3>Redeem</h3>
-          <form class="form-inline">
-            <div class="form-group">
-              <div class="input-group">
-                <input type="text" class="form-control"  style="width:100px;" id="redeem_amount" placeholder="Amount" />
-              </div>
-            </div>
-            <button type="button" class="btn btn-primary" id="redeem_submit" style="width:85px;">Redeem</button>
-          </form>
-        </div>
-      </div>
-    </div>
-    <div class="col-xs-6">
-      <div class="scroll-container" style="margin-top: 20px; height: 420px;">
-        <div style="overflow:hidden;height:281px;width:450px;max-width:100%;max-height:100%;"><div id="youtube_canvas" style="height:100%;width:100%;max-width:100%"><iframe style="height:100%;width:100%;max-width:100%;border:0;" frameborder="0" src="https://www.youtube.com/embed/psktmAhipZE?hl=en&amp;autoplay=0&amp;cc_load_policy=0&amp;loop=0&amp;iv_load_policy=1&amp;fs=1&amp;showinfo=1"></iframe></div><a class="youtube-embed-code" href="http://www.tubeembed.com" id="get-youtube-data">tubeembed</a><style>#youtube_canvas img{max-width:none!important;background:none!important}</style></div>
-        <div style="height: 10px"></div>
-        <p>PredictionToken mints prediction market tokens on the Ethereum blockchain. PredictionTokens have value tied to future outcomes, using <a href="https://realitykeys.com">Reality Keys</a> as the source of truth.</p>
-        <p>Each PredictionToken is defined by an Ethereum smart contract that abides by the <a href="https://github.com/ethereum/EIPs/issues/20">ERC-20 token standard</a>. This means PredictionTokens can trade on any exchange that supports ERC-20 tokens. <a href="https://etherdelta.github.io">EtherDelta</a> is the official exchange for PredictionTokens.</p>
-        <p>Use the dropdown in the upper left to select a PredictionToken. Then use the form on the left to create and redeem Yes and No tokens.</p>
-        <p>When you create PredictionTokens, <br /><code>1 Ether = 1 Yes token + 1 No token</code>.</p>
-        <p>When you redeem PredictionTokens, <br /><code>1 Yes token + 1 No token = 1 Ether</code>.</p>
-        <p>Once the outcome has been resolved, either <br /><code>1 Yes token = 1 Ether</code> or <code>1 No token = 1 Ether</code>, <br />depending on the outcome.</p>
-      </div>
-    </div>
-  </div>
-</div>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Reality Keys</th>
+      <th>Smart contract</th>
+      <th>Balance</th>
+      <th>Outcome</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="<%= realityUrl.replace('/api/v1','') %>" target="_blank">Description</a> (<a href="<%= realityUrl %>" target="_blank">API</a>)</td>
+      <td><a href="<%= contractLink %>" target="_blank">Create/redeem</a></td>
+      <td><%= bundle.utility.weiToEth(supplyOutcome) %> ETH</td>
+      <td>
+        <% if (resolved) { %>
+          <% if (outcome==0) { %>
+            No
+          <% } else if (outcome==1) { %>
+            Yes
+          <% } %>
+        <% } else { %>
+          Unresolved
+        <% } %>
+      </td>
+    </tr>
+  </tbody>
+</table>
