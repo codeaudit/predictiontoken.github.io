@@ -4395,6 +4395,26 @@ function roundToNearest(numToRound, numToRoundTo) {
     return Math.round(numToRound * numToRoundTo) / numToRoundTo;
 }
 
+function getURL(url, callback) {
+  request.get(url, function(err, httpResponse, body){
+    if (err) {
+      callback(err, undefined);
+    } else {
+      callback(undefined, body);
+    }
+  });
+}
+
+function postURL(url, formData, callback) {
+  request.post({url: url, form: formData}, function(err, httpResponse, body){
+    if (err) {
+      callback(err, undefined);
+    } else {
+      callback(undefined, body);
+    }
+  });
+}
+
 function readFile(filename, callback) {
   if (callback) {
     try {
@@ -4584,6 +4604,8 @@ function send(web3, contract, address, functionName, args, fromAddress, privateK
       var encodedParams = encodeConstructorParams(contract.abi, args);
       console.log(encodedParams);
       options.data += encodedParams;
+    } else if (contract==undefined || functionName==undefined) {
+      options.to = address;
     } else {
       options.to = address;
       var functionAbi = contract.abi.find(function(element, index, array) {return element.name==functionName});
@@ -5008,7 +5030,9 @@ function sign(web3, address, value, privateKey, callback) {
     }
   } else {
     web3.eth.sign(address, value, function(err, sig) {
-      if (!err) {
+      if (err && value.slice(0,2)!='0x') {
+        sign(web3, address, '0x'+value, privateKey, callback);
+      } else if (!err) {
         try {
           var r = sig.slice(0, 66);
           var s = '0x' + sig.slice(66, 130);
@@ -5328,10 +5352,12 @@ function getGitterMessages(gitterMessages, callback) {
 function postGitterMessage(message, callback) {
   var url = config.gitterHost + '/v1/rooms/'+config.gitterRoomID+'/chatMessages?access_token='+config.gitterToken;
   request.post({url: url, form: {text: message}}, function(err, httpResponse, body){
-    if (!err) {
-      if (callback) callback(undefined, true);
-    } else {
+    if (err) {
       if (callback) callback('Failure', false);
+    } else if (httpResponse.statusCode==429) {
+      if (callback) callback('The offchain order book is receiving too many requests. Please wait a minute and try again.', false);
+    } else {
+      if (callback) callback(undefined, true);
     }
   });
 }
@@ -5453,6 +5479,8 @@ exports.verify = verify;
 exports.createAccount = createAccount;
 exports.verifyPrivateKey = verifyPrivateKey;
 exports.toChecksumAddress = toChecksumAddress;
+exports.getURL = getURL;
+exports.postURL = postURL;
 exports.readFile = readFile;
 exports.writeFile = writeFile;
 exports.weiToEth = weiToEth;
