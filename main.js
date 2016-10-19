@@ -29,9 +29,9 @@ Main.alertSuccess = function(message) {
   alertify.success(message);
 }
 Main.alertTxResult = function(err, result) {
-  if (result.txHash) {
+  if (!err && result.txHash!='0x0000000000000000000000000000000000000000000000000000000000000000') {
     Main.alertDialog('You just created an Ethereum transaction. Track its progress here: <a href="http://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/tx/'+result.txHash+'" target="_blank">'+result.txHash+'</a>.');
-  } else {
+  } else if (err) {
     Main.alertError('You tried to send an Ethereum transaction but there was an error: '+err);
   }
 }
@@ -77,10 +77,7 @@ Main.logout = function() {
   pks = [config.ethAddrPrivateKey];
   selectedAccount = 0;
   nonce = undefined;
-  Main.displayCoin(function(){
-
-  });
-  Main.refresh(function(){});
+  Main.refresh(function(){}, true);
 }
 Main.createAccount = function() {
   var newAccount = utility.createAccount();
@@ -94,14 +91,12 @@ Main.deleteAccount = function() {
   pks.splice(selectedAccount, 1);
   selectedAccount = 0;
   nonce = undefined;
-  Main.displayCoin(function(){});
-  Main.refresh(function(){});
+  Main.refresh(function(){}, true);
 }
 Main.selectAccount = function(i) {
   selectedAccount = i;
   nonce = undefined;
-  Main.displayCoin(function(){});
-  Main.refresh(function(){});
+  Main.refresh(function(){}, true);
 }
 Main.addAccount = function(addr, pk) {
   if (addr.slice(0,2)!='0x') addr = '0x'+addr;
@@ -116,8 +111,7 @@ Main.addAccount = function(addr, pk) {
     pks.push(pk);
     selectedAccount = addrs.length-1;
     nonce = undefined;
-    Main.displayCoin(function(){});
-    Main.refresh(function(){});
+    Main.refresh(function(){}, true);
   }
 }
 Main.showPrivateKey = function() {
@@ -181,11 +175,6 @@ Main.coinAddr = function(addr) {
   }
 }
 Main.displayCoin = function(callback) {
-  new EJS({url: config.homeURL+'/templates/'+'coins.ejs'}).update('coins', {selectedCoin: selectedCoin, coins: config.coins});
-  new EJS({url: config.homeURL+'/templates/'+'coin.ejs'}).update('coin', {});
-  callback();
-}
-Main.displayBalances = function(callback) {
   var contractLink = Main.addressLink(selectedCoin.addr);
   utility.call(web3, contractYesNo, selectedCoin.addr, 'yesToken', [], function(err, result) {
     var yesAddr = result;
@@ -217,7 +206,8 @@ Main.displayBalances = function(callback) {
                         etherDeltaYes = 'https://etherdelta.github.io/#'+selectedCoin.etherDeltaYes;
                         etherDeltaNo = 'https://etherdelta.github.io/#'+selectedCoin.etherDeltaNo;
                       }
-                      new EJS({url: config.homeURL+'/templates/'+'balances.ejs'}).update('balances', {contractLink: contractLink, selectedCoin: selectedCoin, yesAddr: yesAddr, noAddr: noAddr, yesLink: yesLink, noLink: noLink, balanceYes: balanceYes, balanceNo: balanceNo, supplyYes: supplyYes, supplyNo: supplyNo, supplyOutcome: supplyOutcome, resolved: resolved, outcome: outcome, realityUrl: realityUrl, etherDeltaYes: etherDeltaYes, etherDeltaNo: etherDeltaNo});
+                      new EJS({url: config.homeURL+'/templates/'+'coins.ejs'}).update('coins', {selectedCoin: selectedCoin, coins: config.coins});
+                      new EJS({url: config.homeURL+'/templates/'+'coin.ejs'}).update('coin', {contractLink: contractLink, selectedCoin: selectedCoin, yesAddr: yesAddr, noAddr: noAddr, yesLink: yesLink, noLink: noLink, balanceYes: balanceYes, balanceNo: balanceNo, supplyYes: supplyYes, supplyNo: supplyNo, supplyOutcome: supplyOutcome, resolved: resolved, outcome: outcome, realityUrl: realityUrl, etherDeltaYes: etherDeltaYes, etherDeltaNo: etherDeltaNo});
                       $('[data-toggle="tooltip"]').tooltip();
                       callback();
                     });
@@ -362,7 +352,7 @@ Main.redeem = function(amount) {
   });
 }
 Main.addPending = function(err, tx) {
-  if (!err) {
+  if (!err && tx.txHash!='0x0000000000000000000000000000000000000000000000000000000000000000') {
     tx.txLink = 'https://'+(config.ethTestnet ? 'testnet.' : '')+'etherscan.io/tx/'+tx.txHash;
     pendingTransactions.push(tx);
     Main.displayEvents(function(){});
@@ -372,23 +362,38 @@ Main.updateUrl = function() {
   window.location.hash = '#'+selectedCoin.name;
 }
 Main.refresh = function(callback, force) {
-  if (!lastRefresh || Date.now()-lastRefresh>60*1000 || force) {
-    console.log('Refreshing');
+  q.push(function(done) {
+    console.log('Beginning refresh', new Date());
     if (!lastRefresh) force = true;
     lastRefresh = Date.now();
     Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
     Main.connectionTest();
     Main.updateUrl();
-    Main.loadEvents(function(newEvents){
-      if (newEvents>0 || force) {
-        Main.displayAccounts(function(){});
-        Main.displayBalances(function(){});
-        Main.displayEvents(function(){});
+    async.parallel(
+      [
+        function(callback) {
+          Main.displayCoin(function(){
+            callback(null, undefined);
+          });
+        },
+        function(callback) {
+          Main.loadEvents(function(newEvents){
+            callback(null, undefined);
+            if (newEvents>0 || force) {
+              Main.displayAccounts(function(){});
+              Main.displayEvents(function(){});
+            }
+          });
+        }
+      ],
+      function(err, result) {
+        $('#loading').hide();
+        console.log('Ending refresh');
+        done();
+        callback();
       }
-      $('#loading').hide();
-    });
-  }
-  callback();
+    );
+  });
 }
 Main.refreshLoop = function() {
   function loop() {
@@ -399,15 +404,18 @@ Main.refreshLoop = function() {
   loop();
 }
 Main.init = function(callback) {
+  console.log('Beginning init');
   connection = undefined;
-  Main.createCookie(config.userCookie, JSON.stringify({"addrs": addrs, "pks": pks, "selectedAccount": selectedAccount}), 999);
-  Main.connectionTest();
   Main.displayContent(function(){});
-  Main.displayCoin(function(){});
-  callback();
+  Main.refresh(function(){
+    callback();
+  }, true);
 }
 
 //globals
+var q = async.queue(function(task, callback) {
+  task(callback);
+}, 1);
 var addrs;
 var pks;
 var selectedAccount = 0;
