@@ -7,16 +7,16 @@ var BigNumber = require('bignumber.js');
 var commandLineArgs = require('command-line-args');
 var request = require('request');
 
-var cli = commandLineArgs([
+var cli = [
 	{ name: 'help', alias: 'h', type: Boolean },
 	{ name: 'address', type: String },
 	{ name: 'feeAddress', type: String },
 	{ name: 'url', type: String }
-]);
-var cliOptions = cli.parse()
+];
+var cliOptions = commandLineArgs(cli);
 
 if (cliOptions.help) {
-	console.log(cli.getUsage());
+	console.log(cli);
 } else {
   var web3 = new Web3();
 	web3.eth.defaultAccount = cliOptions.address;

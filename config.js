@@ -34,6 +34,7 @@ configs["2"] = {
   userCookie: 'PredictionToken_testnet',
   eventsCacheCookie: 'PredictionToken_eventsCache_testnet',
   coins: [
+    {name: 'TESTTRMP', kind: 'YesNo', addr: '0xa769af842bc51f8e79a57cff3e9d2cef2f702a1e', etherDeltaYes: 'TESTTRMP-ETH', etherDeltaNo: 'TESTTRMP-ETH', title: 'Donald Trump to win the 2016 US presidential election', explanation: 'Donald Trump to win the US presidential election currently scheduled to take place in November, 2016. Settlement may be delayed if the result is unclear.'},
     {name: 'Hardfork', kind: 'YesNo', addr: '0xd6da98a749ae32d49bed061db4dc11fe5bb1e505', etherDeltaYes: 'HFYES-ETH', etherDeltaNo: 'HFNO-ETH', title: 'Ethereum to hard-fork to retrieve DAO funds', explanation: 'A successful hard fork to take place allowing the recovery of some or all funds taken through bugs in The DAO'},
     {name: 'Zero', kind: 'YesNo', addr: '0x0000000000000000000000000000000000000000', etherDeltaYes: undefined, etherDeltaNo: undefined, title: 'Not a real token', explanation: 'Not a real token'},
   ]

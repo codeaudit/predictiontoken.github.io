@@ -113,8 +113,13 @@ contract StandardToken is Token {
 }
 
 contract ReserveToken is StandardToken, SafeMath {
+    string public name;
+    string public symbol;
+    uint public decimals = 18;
     address public minter;
-    function ReserveToken() {
+    function ReserveToken(string name_, string symbol_) {
+      name = name_;
+      symbol = symbol_;
       minter = msg.sender;
     }
     function create(address account, uint amount) {
@@ -135,6 +140,9 @@ contract YesNo is SafeMath {
   ReserveToken public yesToken;
   ReserveToken public noToken;
 
+  string public name;
+  string public symbol;
+
   //Reality Keys:
   bytes32 public factHash;
   address public ethAddr;
@@ -154,9 +162,11 @@ contract YesNo is SafeMath {
     throw;
   }
 
-  function YesNo(bytes32 factHash_, address ethAddr_, string url_, address feeAccount_, uint fee_) {
-    yesToken = new ReserveToken();
-    noToken = new ReserveToken();
+  function YesNo(string name_, string symbol_, string namey_, string symboly_, string namen_, string symboln_, bytes32 factHash_, address ethAddr_, string url_, address feeAccount_, uint fee_) {
+    name = name_;
+    symbol = symbol_;
+    yesToken = new ReserveToken(namey_, symboly_);
+    noToken = new ReserveToken(namen_, symboln_);
     factHash = factHash_;
     ethAddr = ethAddr_;
     url = url_;
@@ -188,6 +198,100 @@ contract YesNo is SafeMath {
         if (!msg.sender.call.value(safeMul(tokens,(1 ether)-fee)/(1 ether))()) throw;
         Redeem(msg.sender, tokens, tokens, 0);
       }
+    }
+  }
+
+  function resolve(uint8 v, bytes32 r, bytes32 s, bytes32 value) {
+    if (ecrecover(sha3(factHash, value), v, r, s) != ethAddr) throw;
+    if (resolved) throw;
+    uint valueInt = uint(value);
+    if (valueInt==0 || valueInt==1) {
+      outcome = valueInt;
+      resolved = true;
+      Resolve(resolved, outcome);
+    } else {
+      throw;
+    }
+  }
+}
+
+contract Option is SafeMath {
+
+  ReserveToken public callToken;
+  ReserveToken public putToken;
+
+  string public name;
+  string public symbol;
+  uint public strikeCall; //times (1 ether)
+  uint public strikePut; //times (1 ether)
+  //a call is always paired with a put.
+  //strikeCall must be less than strikePut.
+  //the difference bewteen them represents the in-the-money limit.
+
+  //Reality Keys:
+  bytes32 public factHash;
+  address public ethAddr;
+  string public url;
+
+  uint public outcome;
+  bool public resolved = false;
+
+  address public feeAccount;
+  uint public fee; //percentage of 1 ether
+
+  event Create(address indexed account, uint value);
+  event Redeem(address indexed account, uint value, uint callTokens, uint putTokens);
+  event Resolve(bool resolved, uint outcome);
+
+  function() {
+    throw;
+  }
+
+  function Option(uint strikeCall_, uint strikePut_, string name_, string symbol_, string namecall_, string symbolcall_, string nameput_, string symbolput_, bytes32 factHash_, address ethAddr_, string url_, address feeAccount_, uint fee_) {
+    if (strikeCall_ >= strikePut_) throw;
+    strikeCall = strikeCall_;
+    strikePut = strikePut_;
+    name = name_;
+    symbol = symbol_;
+    callToken = new ReserveToken(namecall_, symbolcall_);
+    putToken = new ReserveToken(nameput_, symbolput_);
+    factHash = factHash_;
+    ethAddr = ethAddr_;
+    url = url_;
+    feeAccount = feeAccount_;
+    fee = fee_;
+  }
+
+  function create() {
+    //send X Ether, get X call tokens and X put tokens
+    callToken.create(msg.sender, msg.value);
+    putToken.create(msg.sender, msg.value);
+    Create(msg.sender, msg.value);
+  }
+
+  function redeem(uint tokens) {
+    if (!resolved) {
+      if (!feeAccount.call.value(safeMul(tokens,fee)/(1 ether))()) throw;
+      callToken.destroy(msg.sender, tokens);
+      putToken.destroy(msg.sender, tokens);
+      if (!msg.sender.call.value(safeMul(tokens,(1 ether)-fee)/(1 ether))()) throw;
+      Redeem(msg.sender, tokens, tokens, tokens);
+    } else if (resolved) {
+      uint callTokenBalance = callToken.balanceOf(msg.sender);
+      uint putTokenBalance = putToken.balanceOf(msg.sender);
+      callToken.destroy(msg.sender, callTokenBalance);
+      putToken.destroy(msg.sender, putTokenBalance);
+      uint value = 0;
+      if (outcome <= strikeCall) {
+        value = safeMul(putTokenBalance, (strikeCall - strikePut)) / (1 ether);
+      } else if (outcome >= strikePut) {
+        value = safeMul(callTokenBalance, (strikeCall - strikePut)) / (1 ether);
+      } else {
+        value = safeMul(callTokenBalance, (outcome - strikeCall)) / (1 ether) + safeMul(putTokenBalance, (strikePut - outcome)) / (1 ether);
+      }
+      if (!feeAccount.call.value(safeMul(value,fee)/(1 ether))()) throw;
+      if (!msg.sender.call.value(safeMul(value,(1 ether)-fee)/(1 ether))()) throw;
+      Redeem(msg.sender, value, callTokenBalance, putTokenBalance);
     }
   }
 

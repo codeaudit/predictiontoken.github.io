@@ -2,6 +2,7 @@
   "dependencies": {
     "assert": "^1.4.1",
     "async": "^2.0.0-rc.5",
+    "command-line-args": "^3.0.1",
     "ethereumjs-testrpc": "^2.1.0",
     "ethereumjs-tx": "^1.1.1",
     "ethereumjs-util": "^4.4.1",
