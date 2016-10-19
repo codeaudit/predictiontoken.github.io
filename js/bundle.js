@@ -5845,7 +5845,6 @@ Main.displayEvents = function(callback) {
       pendingTransactions = results.filter(function(x){return x!=undefined});
       //display the template
       new EJS({url: config.homeURL+'/templates/'+'events.ejs'}).update('events', {selectedAddr: addrs[selectedAccount], selectedCoin: selectedCoin, events: events, myEvents: myEvents, pendingTransactions: pendingTransactions});
-      $('table').stickyTableHeaders({scrollableArea: $('.scroll-container')});
       callback();
     }
   );
