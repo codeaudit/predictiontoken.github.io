@@ -190,7 +190,7 @@ Main.displayCoin = function(callback) {
           var balanceNo = result;
           utility.call(web3, contractToken, selectedCoin.yesAddr, 'totalSupply', [], function(err, result) {
             var supplyYes = result;
-            utility.call(web3, contractToken, selectedCoin.yesAddr, 'totalSupply', [], function(err, result) {
+            utility.call(web3, contractToken, selectedCoin.noAddr, 'totalSupply', [], function(err, result) {
               var supplyNo = result;
               utility.getBalance(web3, selectedCoin.addr, function(err, balance) {
                 var supplyOutcome = balance;
@@ -322,26 +322,30 @@ Main.redeem = function(amount) {
         var resolved = result;
         utility.call(web3, contractYesNo, selectedCoin.addr, 'outcome', [], function(err, result) {
           var outcome = result;
-          //if the amount is greater than your balance by at most 0.001, round down
-          if ((!resolved || outcome==1) && amount>balanceYes && utility.weiToEth(amount)-utility.weiToEth(balanceYes)<=0.001) {
+          //round down
+          if ((!resolved || outcome==1) && amount>balanceYes) {
             amount = balanceYes;
           }
-          if ((!resolved || outcome==0) && amount>balanceNo && utility.weiToEth(amount)-utility.weiToEth(balanceNo)<=0.001) {
+          if ((!resolved || outcome==0) && amount>balanceNo) {
             amount = balanceNo;
           }
-          if (!resolved && (amount>balanceYes || amount>balanceNo)) {
-            Main.alertError('You do not have enough Yes tokens and No tokens in your account.');
-          } else if (resolved && outcome==1 && amount>balanceYes) {
-            Main.alertError('You do not have enough Yes tokens in your account.');
-          } else if (resolved && outcome==0 && amount>balanceNo) {
-            Main.alertError('You do not have enough No tokens in your account.');
+          if (amount>0) {
+            if (!resolved && (amount>balanceYes || amount>balanceNo)) {
+              Main.alertError('You do not have enough Yes tokens and No tokens in your account.');
+            } else if (resolved && outcome==1 && amount>balanceYes) {
+              Main.alertError('You do not have enough Yes tokens in your account.');
+            } else if (resolved && outcome==0 && amount>balanceNo) {
+              Main.alertError('You do not have enough No tokens in your account.');
+            } else {
+              utility.send(web3, contractYesNo, selectedCoin.addr, 'redeem', [amount, {gas: 250000, value: 0}], addrs[selectedAccount], pks[selectedAccount], nonce, function(err, result) {
+                txHash = result.txHash;
+                nonce = result.nonce;
+                Main.addPending(err, {txHash: result.txHash});
+                Main.alertTxResult(err, result);
+              });
+            }
           } else {
-            utility.send(web3, contractYesNo, selectedCoin.addr, 'redeem', [amount, {gas: 250000, value: 0}], addrs[selectedAccount], pks[selectedAccount], nonce, function(err, result) {
-              txHash = result.txHash;
-              nonce = result.nonce;
-              Main.addPending(err, {txHash: result.txHash});
-              Main.alertTxResult(err, result);
-            });
+            Main.alertError('You don\'t have tokens to redeem.');
           }
         });
       });
