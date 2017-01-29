@@ -43,6 +43,7 @@ if (cliOptions.help) {
               var value = result.signature_v2.signed_value;
               console.log('Reality Keys released its signature. The value is:', value);
               if (armed) {
+								var nonce = undefined;
                 utility.send(web3, contractYesNo, contractAddr, 'resolve', [sig_v, sig_r, sig_s, value, {gas: 250000, value: 0}], address, undefined, nonce, function(err, result) {
                   console.log('Sent transaction:', result.txHash);
                 });
